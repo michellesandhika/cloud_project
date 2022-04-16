@@ -1,19 +1,165 @@
 <html>
     <head>
         <title>Hello World</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" type="text/css" href="../static/style.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+        <link rel='stylesheet' type='text/css' href='../static/style.css'>
+        <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro'>
+        <script src='https://www.gstatic.com/charts/loader.js'></script>
     </head>
     
     <body>
-        <h2>{{ title }}</h2>
-
-        <ul>
+        <section class='menu'>            
             {% for driver in drivers %}
-            <li>{{ driver }}</li>
+            <a id={{ driver }} href=''>{{ driver }}</a>
             {% endfor %}
-        </ul>
+        </section>
+
+        <main class='dashboard'>
+            <section class='info'>
+                <h2>Driver ID: <span>{{ data.id }}</span></h2>
+                <h2>Car Plate Number: <span>{{ data.plate }}</span></h2>
+            </section>
+
+            <section>
+                <form id='date-form' class='picker'>
+                    <div>
+                        <label>From:</label>
+                        <input id='date-from' type='date' />
+                    </div>
+                    <div>
+                        <label>To:</label>
+                        <input id='date-to' type='date' />
+                    </div>
+                    <button type='onsubmit'>Filter</button>
+                </form>
+
+                <div class='speed'>
+                    <div id='speed' style='width:100%; height:100%;'></div>
+                </div>
+
+                <h2>Statistics</h2>
+                <div class='stats'>
+                    <div class='card'>
+                        <h3>Average Speed</h3>
+                        <h1>{{ data.summary.averageSpeed }} km/h</h1>
+                    </div>
+                    <div class='card'>
+                        <h3>Fatigue Driving</h3>
+                        <h1>{{ data.summary.countFatigueDriving }} times</h1>
+                    </div>
+                    <div class='card'>
+                        <h3>Hthrottle Stop</h3>
+                        <h1>{{ data.summary.countHthrottleStop }} times</h1>
+                    </div>
+                    <div class='card'>
+                        <h3>Oil Leak</h3>
+                        <h1>{{ data.summary.countOilLeak }} times</h1>
+                    </div>
+                    <div class='card' mode='extended'>
+                        <h3>Neutral Sliding:</h3>
+                        <h1>{{ data.summary.totalNeutralSlide }} secs ({{ data.summary.countNeutralSlide }} times)</h1>
+                    </div>
+                    <div class='card' mode='extended'>
+                        <h3>Over Speed:</h3>
+                        <h1>{{ data.summary.totalOverSpeed }} secs ({{ data.summary.countOverSpeed }} times)</h1>
+                    </div>
+                </div>
+                
+                <h2>Historical Data</h2>
+                <div class='history'>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th size='small'>Date & Time</th>
+                                <th size='small'>Latitude</th>
+                                <th size='small'>Longtitude</th>
+                                <th size='small'>Direction</th>
+                                <th>Site Name</th>
+
+                                <th size='large'>Is Rapidly Speeding Up</th>
+                                <th size='large'>Is Rapidly Slowing Down</th>
+
+                                <th>Is Neutral Slide</th>
+                                <th>Neutral Slide Time</th>
+
+                                <th>Is Over Speed</th>
+                                <th>Over Speed Time</th>
+
+                                <th>Is Fatigue Driving</th>
+                                <th>Is Hthrottle Stop</th>
+                                <th>Is Oil Leak</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for content in data.stats %}
+                            <tr>
+                                <td>{{ content.time }}</td>
+                                <td>{{ content.latitude }}</td>
+                                <td>{{ content.longtitude }}</td>
+                                <td>{{ content.direction }}</td>
+                                <td>{{ content.sideName }}</td>
+                                <td>{{ content.isRapidlySpeedup }}</td>
+                                <td>{{ content.isRapidlySlowDown }}</td>
+                                <td>{{ content.isNeutralSlide }}</td>
+                                <td>{{ content.neutralSlideTime }} secs</td>
+                                <td>{{ content.isOverSpeed }}</td>
+                                <td>{{ content.overSpeedTime }} secs</td>
+                                <td>{{ content.isFatigueDriving }}</td>
+                                <td>{{ content.isHthrottleStop }}</td>
+                                <td>{{ content.isOilLeak }}</td>
+                            </tr>
+                            {% endfor%}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <script language='javascript'>
+            // driver button
+            let menu = document.getElementById('{{ data.id }}');
+            menu.style.color = 'var(--white)';
+            menu.style.backgroundColor = 'var(--blue)';
+            menu.style.borderColor = 'var(--blue)';
+
+            let drivers = JSON.parse('{{ drivers|tojson|safe }}');
+            drivers.forEach(driver => {
+                let link = document.getElementById(driver);
+                link.href = '/?driver=' + driver;
+            });
+
+            // filter 
+            let form = document.getElementById('date-form');
+            form.addEventListener('submit', filter);
+            
+            function filter(event) {
+                event.preventDefault();
+
+                let from = document.getElementById('date-from').value;
+                let to = document.getElementById('date-to').value;
+
+                let base = location.href.split('&')[0];
+                location.href = base + '&from=' + from + '&to=' + to;
+            }
+
+            // speed chart
+            google.charts.load('current', { packages:['corechart'] });
+            google.charts.setOnLoadCallback(displaySpeed);
+
+            function displaySpeed() {
+                let content = JSON.parse('{{ data.speed|tojson|safe }}');
+                let data = google.visualization.arrayToDataTable(content);
+
+                let options = {
+                    hAxis: { title: 'Date & Time' },
+                    vAxis: { title: 'Speed in km/h' },
+                    legend: 'none',
+                };
+
+                let chart = new google.visualization.LineChart(document.getElementById('speed'));
+                chart.draw(data, options);
+            }
+        </script>
     </body>
 </html>
 
