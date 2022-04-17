@@ -1,18 +1,21 @@
 from flask import Flask, render_template, request
 
-app = Flask(__name__, static_url_path='/static')
+application = Flask(__name__)
 
 
-@app.route('/')
+@application.route("/")
 def index():
     # get query
     args = request.args.to_dict()
-    driver = args['driver']
+    if 'driver' not in args:
+        driver = "name01"
+    else:
+        driver = args['driver']
 
     # data format
     drivers = ['name01', 'name02', 'name03', 'name04', 'name05', 'name06', 'name07', 'name08', 'name09', 'name10']
     data = {
-        'id': 'name02',
+        'id': 'name01',
         'plate': '华 AEB132',
         'summary': {
             'averageSpeed': '1',
@@ -76,7 +79,7 @@ def index():
 
 
 if __name__ == '__main__':
-	app.run(port=3000, debug=True)
+	application.run(port=5000, debug=True)
 
 
 
