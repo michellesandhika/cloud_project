@@ -133,21 +133,6 @@ td {
     margin-left: 15px;
 }
 
-.picker {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-.picker > div {
-    margin-right: 20px;
-}
-
-.picker > button {
-    padding: 7px 18px;
-}
-
 .speed {
     height: 50vh;
     margin-bottom: 30px;
