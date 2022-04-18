@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request
 
-app = Flask(__name__, static_url_path='/static')
+# init flask app
+application = Flask(__name__)
 
-
-@app.route('/')
+# routes
+@application.route('/')
 def index():
     drivers = ['name01', 'name02', 'name03', 'name04', 'name05', 'name06', 'name07', 'name08', 'name09', 'name10']
     data = {
@@ -81,7 +82,7 @@ def driver():
     # data format
     drivers = ['name01', 'name02', 'name03', 'name04', 'name05', 'name06', 'name07', 'name08', 'name09', 'name10']
     data = {
-        'id': 'name02',
+        'id': 'name01',
         'plate': '华 AEB132',
         'summary': {
             'averageSpeed': '1',
@@ -145,7 +146,7 @@ def driver():
 
 
 if __name__ == '__main__':
-	app.run(port=3000, debug=True)
+	application.run(port=5000, debug=True)
 
 
 
