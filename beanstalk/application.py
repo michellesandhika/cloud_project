@@ -73,7 +73,7 @@ def index():
     
     return render_template('index.html', drivers=drivers, data=data)
 
-@app.route('/driver')
+@application.route('/driver')
 def driver():
     # get query
     args = request.args.to_dict()
