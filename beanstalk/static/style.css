@@ -115,7 +115,7 @@ td {
     margin-bottom: 12px;
 }
 
-.info {
+.header {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
 
@@ -124,11 +124,11 @@ td {
     margin-bottom: 30px;
 }
 
-.info > h2 {
+.header > h2 {
     margin: 0;
 }
 
-.info > h2 > span {
+.header > h2 > span {
     font-weight: 300;
     margin-left: 15px;
 }

@@ -9,13 +9,15 @@
     
     <body>
         <section class='menu'>            
+            <a id='all' href='/'>All Drivers</a>
+
             {% for driver in drivers %}
             <a id={{ driver }} href=''>{{ driver }}</a>
             {% endfor %}
         </section>
 
         <main class='dashboard'>
-            <section class='info'>
+            <section id='header' class='header'>
                 <h2>Driver ID: <span>{{ data.id }}</span></h2>
                 <h2>Car Plate Number: <span>{{ data.plate }}</span></h2>
             </section>
@@ -66,10 +68,12 @@
                 </div>
                 
                 <h2>Historical Data</h2>
-                <div class='history'>
+                <div id='history' class='history'>
                     <table>
                         <thead>
                             <tr>
+                                <th name='history-driver' size='small'>Driver ID</th>
+                                <th name='history-driver' size='small'>Plate</th>
                                 <th size='small'>Date & Time</th>
                                 <th size='small'>Latitude</th>
                                 <th size='small'>Longtitude</th>
@@ -93,6 +97,8 @@
                         <tbody>
                             {% for content in data.stats %}
                             <tr>
+                                <td name='history-driver'>{{ content.id }}</td>
+                                <td name='history-driver'>{{ content.plate }}</td>
                                 <td>{{ content.time }}</td>
                                 <td>{{ content.latitude }}</td>
                                 <td>{{ content.longtitude }}</td>
@@ -116,17 +122,34 @@
         </main>
 
         <script language='javascript'>
-            // driver button
-            let menu = document.getElementById('{{ data.id }}');
-            menu.style.color = 'var(--white)';
-            menu.style.backgroundColor = 'var(--blue)';
-            menu.style.borderColor = 'var(--blue)';
+            const mode = '{{ data.id }}' == '' ? 'all' : 'individual';
+
+            // driver buttons
+            if (mode == 'all') { 
+                let menu = document.getElementById('all');
+                menu.style.color = 'var(--white)';
+                menu.style.backgroundColor = 'var(--blue)';
+                menu.style.borderColor = 'var(--blue)';
+            }
+
+            if (mode == 'individual') {
+                let menu = document.getElementById('{{ data.id }}');
+                menu.style.color = 'var(--white)';
+                menu.style.backgroundColor = 'var(--blue)';
+                menu.style.borderColor = 'var(--blue)';
+            }
 
             let drivers = JSON.parse('{{ drivers|tojson|safe }}');
             drivers.forEach(driver => {
                 let link = document.getElementById(driver);
-                link.href = '/?driver=' + driver;
+                link.href = '/driver?id=' + driver;
             });
+
+            // header
+            if (mode == 'all') {
+                let section = document.getElementById('header');
+                section.style.display = 'none';
+            }
 
             // filter 
             let form = document.getElementById('date-form');
@@ -142,7 +165,7 @@
                 location.href = base + '&from=' + from + '&to=' + to;
             }
 
-            // speed chart
+            // speed
             google.charts.load('current', { packages:['corechart'] });
             google.charts.setOnLoadCallback(displaySpeed);
 
@@ -153,11 +176,19 @@
                 let options = {
                     hAxis: { title: 'Date & Time' },
                     vAxis: { title: 'Speed in km/h' },
-                    legend: 'none',
+                    legend: mode == 'all' ? { position: 'right' } : 'none',
                 };
 
                 let chart = new google.visualization.LineChart(document.getElementById('speed'));
                 chart.draw(data, options);
+            }
+
+            // history
+            if (mode == 'individual') {
+                let elements = document.getElementsByName('history-driver');
+                elements.forEach(item => {
+                    item.style.display = 'none';
+                });
             }
         </script>
     </body>
