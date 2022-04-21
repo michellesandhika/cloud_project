@@ -16,18 +16,18 @@
             {% endfor %}
         </section>
 
-        <main class='dashboard'>
+        <main>
             <section id='header' class='header'>
                 <h2>Driver ID: <span>{{ data.id }}</span></h2>
                 <h2>Car Plate Number: <span>{{ data.plate }}</span></h2>
             </section>
 
-            <section>
-                <div class='speed'>
-                    <div id='speed' style='width:100%; height:100%;'></div>
-                </div>
+            <section id='chart' class='speed'>
+                <div id='speed' style='width:100%; height:100%;'></div>
+            </section>
 
-                <h2>Statistics</h2>
+            <section id='stats'>
+                <h2>Statistics for all drivers</h2>
                 <div class='stats'>
                     <div class='card'>
                         <h3>Average Speed</h3>
@@ -54,58 +54,36 @@
                         <h1>{{ data.summary.totalOverSpeed }} secs ({{ data.summary.countOverSpeed }} times)</h1>
                     </div>
                 </div>
-                
-                <h2>Historical Data</h2>
-                <div id='history' class='history'>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th name='history-driver' size='small'>Driver ID</th>
-                                <th name='history-driver' size='small'>Plate</th>
-                                <th size='small'>Date & Time</th>
-                                <th size='small'>Latitude</th>
-                                <th size='small'>Longtitude</th>
-                                <th size='small'>Direction</th>
-                                <th>Site Name</th>
 
-                                <th size='large'>Is Rapidly Speeding Up</th>
-                                <th size='large'>Is Rapidly Slowing Down</th>
-
-                                <th>Is Neutral Slide</th>
-                                <th>Neutral Slide Time</th>
-
-                                <th>Is Over Speed</th>
-                                <th>Over Speed Time</th>
-
-                                <th>Is Fatigue Driving</th>
-                                <th>Is Hthrottle Stop</th>
-                                <th>Is Oil Leak</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for content in data.stats %}
-                            <tr>
-                                <td name='history-driver'>{{ content.id }}</td>
-                                <td name='history-driver'>{{ content.plate }}</td>
-                                <td>{{ content.time }}</td>
-                                <td>{{ content.latitude }}</td>
-                                <td>{{ content.longtitude }}</td>
-                                <td>{{ content.direction }}</td>
-                                <td>{{ content.sideName }}</td>
-                                <td>{{ content.isRapidlySpeedup }}</td>
-                                <td>{{ content.isRapidlySlowDown }}</td>
-                                <td>{{ content.isNeutralSlide }}</td>
-                                <td>{{ content.neutralSlideTime }} secs</td>
-                                <td>{{ content.isOverSpeed }}</td>
-                                <td>{{ content.overSpeedTime }} secs</td>
-                                <td>{{ content.isFatigueDriving }}</td>
-                                <td>{{ content.isHthrottleStop }}</td>
-                                <td>{{ content.isOilLeak }}</td>
-                            </tr>
-                            {% endfor%}
-                        </tbody>
-                    </table>
-                </div>
+                <h2>Statistics for each driver</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th size='small'>Driver ID</th>
+                            <th size='small'>Plate</th>
+                            <th>Average Speed</th>
+                            <th>Fatigue Driving</th>
+                            <th>Hthrottle Stop</th>
+                            <th size='small'>Oil Leak</th>
+                            <th>Neutral Slide</th>
+                            <th>Overspeed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for content in data.stats %}
+                        <tr>
+                            <td>{{ content.id }}</td>
+                            <td>{{ content.plate }}</td>
+                            <td>{{ content.averageSpeed }}</td>
+                            <td>{{ content.countFatigueDriving }}</td>
+                            <td>{{ content.countHthrottleStop }}</td>
+                            <td>{{ content.countOilLeak }}</td>
+                            <td>{{ content.totalNeutralSlide }} secs ({{ content.countNeutralSlide }} times)</td>
+                            <td>{{ content.totalOverSpeed }} secs ({{ content.countOverSpeed }} times)</td>
+                        </tr>
+                        {% endfor%}
+                    </tbody>
+                </table>
             </section>
         </main>
 
@@ -140,6 +118,11 @@
             }
 
             // speed
+            if (mode == 'all') {
+                let section = document.getElementById('chart');
+                section.style.display = 'none';
+            }
+
             google.charts.load('current', { packages:['corechart'] });
             google.charts.setOnLoadCallback(displaySpeed);
 
@@ -150,19 +133,17 @@
                 let options = {
                     hAxis: { title: 'Date & Time' },
                     vAxis: { title: 'Speed in km/h' },
-                    legend: mode == 'all' ? { position: 'right' } : 'none',
+                    legend: 'none',
                 };
 
                 let chart = new google.visualization.LineChart(document.getElementById('speed'));
                 chart.draw(data, options);
             }
 
-            // history
+            // stats 
             if (mode == 'individual') {
-                let elements = document.getElementsByName('history-driver');
-                elements.forEach(item => {
-                    item.style.display = 'none';
-                });
+                let section = document.getElementById('stats');
+                section.style.display = 'none';
             }
         </script>
     </body>
