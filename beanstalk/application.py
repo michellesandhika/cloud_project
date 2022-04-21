@@ -11,7 +11,7 @@ def db_connection():
    user = 'clouduser',
    port = '3306',
    database = '',
-   passwd = 'cloudcomputing',
+   password = 'cloudcomputing',
    autocommit = True)
    
    return mydb
@@ -25,7 +25,7 @@ application = Flask(__name__)
 # routes
 @application.route('/')
 def index():
-    drivers = ['name01', 'name02', 'name03', 'name04', 'name05', 'name06', 'name07', 'name08', 'name09', 'name10']
+    drivers = ['likun1000003', 'haowei1000008', 'zouan1000007', 'zengpeng1000000', 'xiexiao1000001', 'shenxian1000004', 'panxian1000005', 'hanhui1000002', 'duxu1000009', 'xiezhi1000006']
     data = {
         'id': '',
         'plate': '',
@@ -76,12 +76,7 @@ def driver():
     args = request.args.to_dict()
     driver = args['id']
 
-    # data format
-    drivers = ['name01', 'name02', 'name03', 'name04', 'name05', 'name06', 'name07', 'name08', 'name09', 'name10']
-    
-    # data format
-    # drivers = ['likun1000003', 'haowei1000008', 'zouan1000007', 'zengpeng1000000', 'xiexiao1000001', 'shenxian1000004', 'panxian1000005', 'hanhui1000002', 'duxu1000009', 'xiezhi1000006']
-    
+    drivers = ['likun1000003', 'haowei1000008', 'zouan1000007', 'zengpeng1000000', 'xiexiao1000001', 'shenxian1000004', 'panxian1000005', 'hanhui1000002', 'duxu1000009', 'xiezhi1000006']
     speedArrayTotal = [['Date', 'Speed'], ["2017-1-1 08:00:00", 0]]
     
     data = {
