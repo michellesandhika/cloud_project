@@ -5,7 +5,11 @@
         <link rel='stylesheet' type='text/css' href='../static/style.css'>
         <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro'>
         <script src='https://www.gstatic.com/charts/loader.js'></script>
+        <script src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
+        <script src="http://cdn.hcharts.cn/highstock/highstock.js"></script>
+        <script src="http://cdn.hcharts.cn/highcharts/modules/exporting.js"></script>
     </head>
+
     
     <body>
         <section class='menu'>            
@@ -88,7 +92,16 @@
         </main>
 
         <script language='javascript'>
-            const mode = '{{ data.id }}' == '' ? 'all' : 'individual';
+            setInterval(function () {
+                const queryString = window.location.search;
+                const urlParams = new URLSearchParams(queryString);
+                const driverID = urlParams.get('id')
+                console.log(driverID)
+                
+                const dataLink = "/data?id=" +  driverID
+                console.log(dataLink)
+              $.getJSON(dataLink, function (res) {
+                const mode = '{{ data.id }}' == '' ? 'all' : 'individual';
 
             // driver buttons
             if (mode == 'all') { 
@@ -127,7 +140,8 @@
             google.charts.setOnLoadCallback(displaySpeed);
 
             function displaySpeed() {
-                let content = JSON.parse('{{ data.speed|tojson|safe }}');
+                let jsonSpeed = JSON.stringify(res.speed);
+                let content = JSON.parse(jsonSpeed);
                 let data = google.visualization.arrayToDataTable(content);
 
                 let options = {
@@ -145,6 +159,10 @@
                 let section = document.getElementById('stats');
                 section.style.display = 'none';
             }
+                  
+              });
+            }, 2000);
+            
         </script>
     </body>
 </html>

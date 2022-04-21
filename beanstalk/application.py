@@ -85,7 +85,7 @@ def driver():
     speedArrayTotal = [['Date', 'Speed'], ["2017-1-1 08:00:00", 0]]
     
     data = {
-        'id': 'name01',
+        'id': driver,
         'plate': '华 AEB132',
         'summary': {},
         'stats': [],
@@ -109,7 +109,7 @@ def getData():
     date_and_time = new_time
     print(date_and_time)
     
-    sql = "SELECT * FROM userTable.partBTable WHERE driverID=\"likun1000003\" and time < \"{0}\";".format(date_and_time)
+    sql = "SELECT * FROM userTable.partBTable WHERE driverID=\"{0}\" and time < \"{1}\";".format("likun1000003",date_and_time)
     ret = cur.execute(sql)
     result = cur.fetchall()
     print(result)
@@ -119,19 +119,19 @@ def getData():
 
     for i in range(0, len(result)):
         speedArray = []
-        speedArray.append(result[i][1])
         speedArray.append(result[i][2].strftime("%Y%m%d , %H:%M:%S"))
+        speedArray.append(result[i][1])
         speedArrayTotal.append(speedArray)
         
-    # lastOverspeed = result[0][3]
+    if len(result) == 0:
+        lastOverspeed = 0
+    else:
+        lastOverspeed = result[len(result)-1][3]
+    print(speedArrayTotal)
     
     data = {
-        'id': 'name01',
-        'plate': '华 AEB132',
-        'summary': {},
-        'stats': [],
         'speed': speedArrayTotal,
-        'lastOverspped': 0,
+        'lastOverspeed': lastOverspeed,
     }
 
     return data
