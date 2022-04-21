@@ -93,15 +93,15 @@ table {
 th {
     padding: 8px;
     border-bottom: 1px solid var(--black);
-    min-width: 180px;
+    width: 160px;
 }
 
 th[size=small] {
-    min-width: 140px;
+    width: 120px;
 }
 
 th[size=large] {
-    min-width: 240px;
+    width: 200px;
 }
 
 td { 

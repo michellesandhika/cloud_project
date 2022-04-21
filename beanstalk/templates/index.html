@@ -10,7 +10,6 @@
         <script src="http://cdn.hcharts.cn/highcharts/modules/exporting.js"></script>
     </head>
 
-    
     <body>
         <section class='menu'>            
             <a id='all' href='/'>All Drivers</a>
@@ -92,16 +91,7 @@
         </main>
 
         <script language='javascript'>
-            setInterval(function () {
-                const queryString = window.location.search;
-                const urlParams = new URLSearchParams(queryString);
-                const driverID = urlParams.get('id')
-                console.log(driverID)
-                
-                const dataLink = "/data?id=" +  driverID
-                console.log(dataLink)
-              $.getJSON(dataLink, function (res) {
-                const mode = '{{ data.id }}' == '' ? 'all' : 'individual';
+            const mode = '{{ data.id }}' == '' ? 'all' : 'individual';
 
             // driver buttons
             if (mode == 'all') { 
@@ -130,39 +120,45 @@
                 section.style.display = 'none';
             }
 
-            // speed
-            if (mode == 'all') {
-                let section = document.getElementById('chart');
-                section.style.display = 'none';
-            }
-
-            google.charts.load('current', { packages:['corechart'] });
-            google.charts.setOnLoadCallback(displaySpeed);
-
-            function displaySpeed() {
-                let jsonSpeed = JSON.stringify(res.speed);
-                let content = JSON.parse(jsonSpeed);
-                let data = google.visualization.arrayToDataTable(content);
-
-                let options = {
-                    hAxis: { title: 'Date & Time' },
-                    vAxis: { title: 'Speed in km/h' },
-                    legend: 'none',
-                };
-
-                let chart = new google.visualization.LineChart(document.getElementById('speed'));
-                chart.draw(data, options);
-            }
-
             // stats 
             if (mode == 'individual') {
                 let section = document.getElementById('stats');
                 section.style.display = 'none';
             }
-                  
-              });
-            }, 2000);
-            
+
+            // speed
+            if (mode == 'all') {
+                let section = document.getElementById('chart');
+                section.style.display = 'none';
+            }
+            else {
+                setInterval(function () {
+                    const queryString = window.location.search;
+                    const urlParams = new URLSearchParams(queryString);
+                    const driverID = urlParams.get('id')
+                    const dataLink = "/data?id=" +  driverID
+
+                    $.getJSON(dataLink, function (res) {
+                        google.charts.load('current', { packages:['corechart'] });
+                        google.charts.setOnLoadCallback(displaySpeed);
+
+                        function displaySpeed() {
+                            let jsonSpeed = JSON.stringify(res.speed);
+                            let content = JSON.parse(jsonSpeed);
+                            let data = google.visualization.arrayToDataTable(content);
+
+                            let options = {
+                                hAxis: { title: 'Date & Time' },
+                                vAxis: { title: 'Speed in km/h' },
+                                legend: 'none',
+                            };
+
+                            let chart = new google.visualization.LineChart(document.getElementById('speed'));
+                            chart.draw(data, options);
+                        }
+                    });
+                }, 2000);
+            }
         </script>
     </body>
 </html>
