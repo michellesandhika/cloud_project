@@ -4,6 +4,7 @@ from turtle import speed
 import mysql.connector
 import json
 from time import time, sleep
+from http import cookies
     
 def db_connection():
    mydb = mysql.connector.connect( host = 'cloudcompproject.c5v4sxvaiqcz.us-east-1.rds.amazonaws.com',
@@ -71,18 +72,12 @@ def index():
 
 @application.route('/driver')
 def driver():
-    
     # get query
     args = request.args.to_dict()
     driver = args['id']
 
     # data format
     drivers = ['name01', 'name02', 'name03', 'name04', 'name05', 'name06', 'name07', 'name08', 'name09', 'name10']
-
-    global date_and_time
-    date_and_time = datetime.datetime(2017, 1, 1, 8, 0, 0)
-    lastTime = datetime.datetime(2017, 1, 1, 23, 59, 59)
-    
     
     # data format
     # drivers = ['likun1000003', 'haowei1000008', 'zouan1000007', 'zengpeng1000000', 'xiexiao1000001', 'shenxian1000004', 'panxian1000005', 'hanhui1000002', 'duxu1000009', 'xiezhi1000006']
@@ -98,59 +93,49 @@ def driver():
         'lastOverspeed': 0,
     }
     
-    # data = {
-    #     'id': 'name01',
-    #     'plate': '华 AEB132',
-    #     'summary': {},
-    #     'stats': [],
-    #     'speed': [
-    #         ['Date', 'Speed'],
-    #         ['2017-01-01 22:35:50', 66],
-    #         ['2017-01-01 22:35:50', 68],
-    #         ['2017-01-01 22:35:50', 68],
-    #         ['2017-01-01 22:35:50', 68],
-    #         ['2017-01-01 22:35:50', 68],
-    #     ],
-    # }
-    
     return render_template('index.html', drivers=drivers, data=data)
-        
-    # while date_and_time < lastTime:
-    #     sleep(30 - time() % 30)
-    #     time_change = datetime.timedelta(seconds=30)
-    #     new_time = date_and_time + time_change
-    #     date_and_time = new_time
-        
-    #     sql = "SELECT * FROM userTable.partBTable WHERE driverID=\"{0}\" and time < \"{1}\";".format(driver, date_and_time)
-    #     ret = cur.execute(sql)
-    #     result = cur.fetchall()
-        
-    #     speedArrayTotal = []
-    #     speedArrayTotal.append(['Date', 'Speed'])
+    
+@application.route('/data')
+def getData():
+    global date_and_time
+    try:
+        date_and_time
+    except NameError:
+        date_and_time = datetime.datetime(2017, 1, 1, 8, 0, 0)
+    lastTime = datetime.datetime(2017, 1, 1, 23, 59, 59) 
+    
+    time_change = datetime.timedelta(seconds=30)
+    new_time = date_and_time + time_change
+    date_and_time = new_time
+    print(date_and_time)
+    
+    sql = "SELECT * FROM userTable.partBTable WHERE driverID=\"likun1000003\" and time < \"{0}\";".format(date_and_time)
+    ret = cur.execute(sql)
+    result = cur.fetchall()
+    print(result)
+    
+    speedArrayTotal = []
+    speedArrayTotal.append(['Date', 'Speed'])
 
-    #     for i in range(0, len(result)):
-    #         speedArray = []
-    #         speedArray.append(result[i][1])
-    #         speedArray.append(result[i][2].strftime("%Y%m%d , %H:%M:%S"))
-    #         speedArrayTotal.append(speedArray)
-            
-    #     lastOverspeed = result[len(result)-1][3]
+    for i in range(0, len(result)):
+        speedArray = []
+        speedArray.append(result[i][1])
+        speedArray.append(result[i][2].strftime("%Y%m%d , %H:%M:%S"))
+        speedArrayTotal.append(speedArray)
         
-    #     data = {
-    #         'id': 'name01',
-    #         'plate': '华 AEB132',
-    #         'summary': {},
-    #         'stats': [],
-    #         'speed': speedArrayTotal,
-    #         'lastOverspped': lastOverspeed,
-    #     }
+    # lastOverspeed = result[0][3]
+    
+    data = {
+        'id': 'name01',
+        'plate': '华 AEB132',
+        'summary': {},
+        'stats': [],
+        'speed': speedArrayTotal,
+        'lastOverspped': 0,
+    }
 
-    #     return render_template('index.html', drivers=drivers, data=data)
+    return data
 
 
 if __name__ == '__main__':
 	application.run(port=5000, debug=True)
-
-
-
-
