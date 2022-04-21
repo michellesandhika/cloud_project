@@ -1,11 +1,9 @@
 from flask import Flask, render_template, request
 import datetime
-from turtle import speed
 import mysql.connector
-import json
-from time import time, sleep
-from http import cookies
     
+    
+# modify the dmb connection credential here
 def db_connection():
     mydb = mysql.connector.connect( 
         host = 'cloudcompproject.c5v4sxvaiqcz.us-east-1.rds.amazonaws.com',
@@ -28,48 +26,67 @@ application = Flask(__name__)
 @application.route('/')
 def index():
     drivers = ['likun1000003', 'haowei1000008', 'zouan1000007', 'zengpeng1000000', 'xiexiao1000001', 'shenxian1000004', 'panxian1000005', 'hanhui1000002', 'duxu1000009', 'xiezhi1000006']
+    
+    sql = "SELECT * FROM userTable.driverEvents";
+    ret = cur.execute(sql)
+    result = cur.fetchall()
+    
+    statistics = []
+    summaryStatistics = [0,0,0,0,0,0,0,0]
+    
+    for driverNow in result:
+        
+        summaryStatistics[0] = summaryStatistics[0] + float(driverNow[2])
+        summaryStatistics[1] = summaryStatistics[1] + float(driverNow[3])
+        summaryStatistics[2] = summaryStatistics[2] + float(driverNow[4])
+        summaryStatistics[3] = summaryStatistics[3] + float(driverNow[5])
+        summaryStatistics[4] = summaryStatistics[4] + float(driverNow[6])
+        summaryStatistics[5] = summaryStatistics[5] + float(driverNow[7])
+        summaryStatistics[6] = summaryStatistics[6] + float(driverNow[8])
+        summaryStatistics[7] = summaryStatistics[7] + float(driverNow[9])
+        
+        
+        driverStatistics = {
+                'id': driverNow[0],
+                'plate': driverNow[1],
+                'averageSpeed': driverNow[2],
+                'countFatigueDriving': driverNow[3],
+                'countHthrottleStop': driverNow[4],
+                'countOilLeak': driverNow[5],
+                'countNeutralSlide': driverNow[6],
+                'totalNeutralSlide': driverNow[7],
+                'countOverSpeed': driverNow[8],
+                'totalOverSpeed': driverNow[9],
+            },
+        statistics.extend(driverStatistics)
+        
+    averageSpeed = summaryStatistics[0] / 10
+    countFatigueDriving = summaryStatistics[1]  / 10
+    countHthrottleStop = summaryStatistics[2] / 10
+    countOilLeak = summaryStatistics[3] / 10
+    countNeutralSlide = summaryStatistics[4] / 10
+    totalNeutralSlide = summaryStatistics[5] / 10
+    countOverSpeed = summaryStatistics[6] / 10
+    totalOverSpeed = summaryStatistics[7] / 10
+        
     data = {
         'id': '',
         'plate': '',
         'summary': {
-            'averageSpeed': '1',
-            'countFatigueDriving': '2',
-            'countHthrottleStop': '3',
-            'countOilLeak': '4',
-            'countNeutralSlide': '5',
-            'totalNeutralSlide': '6',
-            'countOverSpeed': '7',
-            'totalOverSpeed': '8',
+            'averageSpeed': averageSpeed,
+            'countFatigueDriving': countFatigueDriving,
+            'countHthrottleStop': countHthrottleStop,
+            'countOilLeak': countOilLeak,
+            'countNeutralSlide': countNeutralSlide,
+            'totalNeutralSlide': totalNeutralSlide,
+            'countOverSpeed': countOverSpeed,
+            'totalOverSpeed': totalOverSpeed,
         },
-        'stats': [
-            {
-                'id': 'name01',
-                'plate': '华 AEB132',
-                'averageSpeed': '1',
-                'countFatigueDriving': '2',
-                'countHthrottleStop': '3',
-                'countOilLeak': '4',
-                'countNeutralSlide': '5',
-                'totalNeutralSlide': '6',
-                'countOverSpeed': '7',
-                'totalOverSpeed': '8',
-            },
-            {
-                'id': 'name02',
-                'plate': '华 AEB132',
-                'averageSpeed': '1',
-                'countFatigueDriving': '2',
-                'countHthrottleStop': '3',
-                'countOilLeak': '4',
-                'countNeutralSlide': '5',
-                'totalNeutralSlide': '6',
-                'countOverSpeed': '7',
-                'totalOverSpeed': '8',
-            }
-        ],
+        'stats': statistics,
         'speed': [],
         'lastOverspeed': 0,
     }
+    print(data)
     
     return render_template('index.html', drivers=drivers, data=data)
 
