@@ -131,7 +131,7 @@ def getData():
     
     data = {
         'speed': speedArrayTotal,
-        'lastOverspeed': 1, #lastOverspeed,
+        'lastOverspeed': lastOverspeed,
     }
 
     return data
