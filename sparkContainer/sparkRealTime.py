@@ -9,13 +9,6 @@ starttime = datetime.now()
 mydb = db_connection()
 cur = mydb.cursor()
 
-def db_connection():
-	mydb = mysql.connector.connect(host = 'drivercloudproject.c5v4sxvaiqcz.us-east-1.rds.amazonaws.com',
-		user='clouduser',
-		port = '3306',
-		passwd='driverdata',
-		database='drivercloudproject',
-		autocommit=True)
 
 def senddata(data):
 	# pad the data so its same size
