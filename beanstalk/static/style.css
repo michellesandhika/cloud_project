@@ -4,6 +4,9 @@
     --grey: rgba(26, 26, 26, 0.1);
     --black: rgb(26, 26, 26);
 
+    --yellow: rgb(249, 231, 165);
+    --darkYellow: rgb(205, 141, 58);
+
     --blue: rgba(14, 122, 254, 0.8);
     --lightBlue: rgba(14, 122, 254, 0.4);
     --extraLightBlue: rgba(14, 122, 254, 0.2);
@@ -93,11 +96,11 @@ table {
 th {
     padding: 8px;
     border-bottom: 1px solid var(--black);
-    width: 160px;
+    width: 180px;
 }
 
 th[size=small] {
-    width: 120px;
+    width: 140px;
 }
 
 th[size=large] {
@@ -145,6 +148,16 @@ td {
 .speed {
     height: 70vh;
     margin-bottom: 30px;
+}
+
+.warning {
+    padding: 2px 25px;
+    border-radius: 10px;
+    background-color: var(--yellow);
+}
+
+.warning > h3 {
+    color: var(--darkYellow);
 }
 
 .stats {

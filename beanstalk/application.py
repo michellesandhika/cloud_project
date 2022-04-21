@@ -7,14 +7,16 @@ from time import time, sleep
 from http import cookies
     
 def db_connection():
-   mydb = mysql.connector.connect( host = 'cloudcompproject.c5v4sxvaiqcz.us-east-1.rds.amazonaws.com',
-   user = 'clouduser',
-   port = '3306',
-   database = '',
-   password = 'cloudcomputing',
-   autocommit = True)
-   
-   return mydb
+    mydb = mysql.connector.connect( 
+        host = 'cloudcompproject.c5v4sxvaiqcz.us-east-1.rds.amazonaws.com',
+        user = 'clouduser',
+        port = '3306',
+        database = '',
+        password = 'cloudcomputing',
+        autocommit = True
+    )
+
+    return mydb
 
 mydb = db_connection()
 cur = mydb.cursor()
@@ -65,14 +67,15 @@ def index():
                 'totalOverSpeed': '8',
             }
         ],
-        'speed': []
+        'speed': [],
+        'lastOverspeed': 0,
     }
     
     return render_template('index.html', drivers=drivers, data=data)
 
+
 @application.route('/driver')
 def driver():
-    # get query
     args = request.args.to_dict()
     driver = args['id']
 
@@ -90,6 +93,7 @@ def driver():
     
     return render_template('index.html', drivers=drivers, data=data)
     
+
 @application.route('/data')
 def getData():
     global date_and_time
@@ -97,6 +101,7 @@ def getData():
         date_and_time
     except NameError:
         date_and_time = datetime.datetime(2017, 1, 1, 8, 0, 0)
+
     lastTime = datetime.datetime(2017, 1, 1, 23, 59, 59) 
     
     time_change = datetime.timedelta(seconds=30)
@@ -118,7 +123,7 @@ def getData():
         speedArray.append(result[i][1])
         speedArrayTotal.append(speedArray)
         
-    if len(result) == 0:
+    if (len(result) == 0):
         lastOverspeed = 0
     else:
         lastOverspeed = result[len(result)-1][3]
@@ -126,7 +131,7 @@ def getData():
     
     data = {
         'speed': speedArrayTotal,
-        'lastOverspeed': lastOverspeed,
+        'lastOverspeed': 1, #lastOverspeed,
     }
 
     return data
