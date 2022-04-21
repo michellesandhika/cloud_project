@@ -22,7 +22,6 @@
         <main>
             <section id='header' class='header'>
                 <h2>Driver ID: <span>{{ data.id }}</span></h2>
-                <h2>Car Plate Number: <span>{{ data.plate }}</span></h2>
             </section>
 
             <section id='chart' class='speed'>
@@ -137,7 +136,7 @@
                 section.style.display = 'none';
             }
             else {
-                setInterval(function () {
+                function foo() {
                     const queryString = window.location.search;
                     const urlParams = new URLSearchParams(queryString);
                     const driverID = urlParams.get('id')
@@ -167,7 +166,11 @@
                             chart.draw(data, options);
                         }
                     });
-                }, 2000);
+                    setTimeout(foo, 30000);
+                }
+                foo()
+                
+                
             }
         </script>
     </body>

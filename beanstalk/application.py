@@ -36,27 +36,27 @@ def index():
     
     for driverNow in result:
         
-        summaryStatistics[0] = summaryStatistics[0] + float(driverNow[2])
+        summaryStatistics[0] = summaryStatistics[0] + float(driverNow[6])
         summaryStatistics[1] = summaryStatistics[1] + float(driverNow[3])
-        summaryStatistics[2] = summaryStatistics[2] + float(driverNow[4])
-        summaryStatistics[3] = summaryStatistics[3] + float(driverNow[5])
-        summaryStatistics[4] = summaryStatistics[4] + float(driverNow[6])
+        summaryStatistics[2] = summaryStatistics[2] + float(driverNow[7])
+        summaryStatistics[3] = summaryStatistics[3] + float(driverNow[8])
+        summaryStatistics[4] = summaryStatistics[4] + float(driverNow[9])
         summaryStatistics[5] = summaryStatistics[5] + float(driverNow[7])
-        summaryStatistics[6] = summaryStatistics[6] + float(driverNow[8])
-        summaryStatistics[7] = summaryStatistics[7] + float(driverNow[9])
+        summaryStatistics[6] = summaryStatistics[6] + float(driverNow[2])
+        summaryStatistics[7] = summaryStatistics[7] + float(driverNow[4])
         
         
         driverStatistics = {
                 'id': driverNow[0],
                 'plate': driverNow[1],
-                'averageSpeed': driverNow[2],
+                'averageSpeed': driverNow[6],
                 'countFatigueDriving': driverNow[3],
-                'countHthrottleStop': driverNow[4],
-                'countOilLeak': driverNow[5],
-                'countNeutralSlide': driverNow[6],
+                'countHthrottleStop': driverNow[7],
+                'countOilLeak': driverNow[8],
+                'countNeutralSlide': driverNow[9],
                 'totalNeutralSlide': driverNow[7],
-                'countOverSpeed': driverNow[8],
-                'totalOverSpeed': driverNow[9],
+                'countOverSpeed': driverNow[2],
+                'totalOverSpeed': driverNow[4],
             },
         statistics.extend(driverStatistics)
         
@@ -117,23 +117,30 @@ def getData():
     args = request.args.to_dict()
     driver = args['id']
     
+    speedArrayTotal = [['Date', 'Speed'], ["2017-1-1 08:00:00", 0]]
+    data = {
+        'id': driver,
+        'plate': '华 AEB132',
+        'summary': {},
+        'stats': [],
+        'speed': speedArrayTotal,
+        'lastOverspeed': 0,
+    }
+    
     global date_and_time
     try:
         date_and_time
     except NameError:
         date_and_time = datetime.datetime(2017, 1, 1, 8, 0, 0)
-
-    lastTime = datetime.datetime(2017, 1, 1, 23, 59, 59) 
+        return data
     
     time_change = datetime.timedelta(seconds=30)
     new_time = date_and_time + time_change
     date_and_time = new_time
-    print(date_and_time)
     
     sql = "SELECT * FROM userTable.partBTable WHERE driverID=\"{0}\" and time < \"{1}\";".format(driver,date_and_time)
     ret = cur.execute(sql)
     result = cur.fetchall()
-    print(result)
     
     speedArrayTotal = []
     speedArrayTotal.append(['Date', 'Speed'])
@@ -148,7 +155,6 @@ def getData():
         lastOverspeed = 0
     else:
         lastOverspeed = result[len(result)-1][3]
-    print(speedArrayTotal)
     
     data = {
         'speed': speedArrayTotal,
