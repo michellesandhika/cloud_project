@@ -96,6 +96,10 @@ def driver():
 
 @application.route('/data')
 def getData():
+    
+    args = request.args.to_dict()
+    driver = args['id']
+    
     global date_and_time
     try:
         date_and_time
@@ -109,7 +113,7 @@ def getData():
     date_and_time = new_time
     print(date_and_time)
     
-    sql = "SELECT * FROM userTable.partBTable WHERE driverID=\"{0}\" and time < \"{1}\";".format("likun1000003",date_and_time)
+    sql = "SELECT * FROM userTable.partBTable WHERE driverID=\"{0}\" and time < \"{1}\";".format(driver,date_and_time)
     ret = cur.execute(sql)
     result = cur.fetchall()
     print(result)
