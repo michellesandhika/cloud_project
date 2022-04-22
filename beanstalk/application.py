@@ -22,6 +22,12 @@ cur = mydb.cursor()
 # init flask app
 application = Flask(__name__)
 
+
+# helper function
+def formatNumber(n):
+    return '{:.2f}'.format(n)
+
+
 # routes
 @application.route('/')
 def index():
@@ -49,7 +55,7 @@ def index():
         driverStatistics = {
                 'id': driverNow[0],
                 'plate': driverNow[1],
-                'averageSpeed': driverNow[6],
+                'averageSpeed': formatNumber(float(driverNow[6])),
                 'countFatigueDriving': driverNow[3],
                 'countHthrottleStop': driverNow[7],
                 'countOilLeak': driverNow[8],
@@ -60,14 +66,14 @@ def index():
             },
         statistics.extend(driverStatistics)
         
-    averageSpeed = summaryStatistics[0] / 10
-    countFatigueDriving = summaryStatistics[1]  / 10
-    countHthrottleStop = summaryStatistics[2] / 10
-    countOilLeak = summaryStatistics[3] / 10
-    countNeutralSlide = summaryStatistics[4] / 10
-    totalNeutralSlide = summaryStatistics[5] / 10
-    countOverSpeed = summaryStatistics[6] / 10
-    totalOverSpeed = summaryStatistics[7] / 10
+    averageSpeed = formatNumber(summaryStatistics[0] / 10)
+    countFatigueDriving = formatNumber(summaryStatistics[1]  / 10)
+    countHthrottleStop = formatNumber(summaryStatistics[2] / 10)
+    countOilLeak = formatNumber(summaryStatistics[3] / 10)
+    countNeutralSlide = formatNumber(summaryStatistics[4] / 10)
+    totalNeutralSlide = formatNumber(summaryStatistics[5] / 10)
+    countOverSpeed = formatNumber(summaryStatistics[6] / 10)
+    totalOverSpeed = formatNumber(summaryStatistics[7] / 10)
         
     data = {
         'id': '',
